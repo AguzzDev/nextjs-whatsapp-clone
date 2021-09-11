@@ -1,0 +1,55 @@
+.nav-button{
+    position: relative;
+}
+.nav-drawer,
+.nav-drawer{
+    background-color: #131C21;
+    width: 0%;
+    opacity: 0;
+    position: absolute;
+    top: 6%;
+    left: 10%;
+    border-radius: 3px;
+    z-index: 10;
+}
+.activonavdrawer,
+.activonavdrawer2{
+    opacity: 1;
+    width: 26.6%;
+    height: 88.2%;
+    animation:Drawer;
+    animation-duration: 0.3s;
+}
+@keyframes Drawer{
+    0%{
+        transform: translateX(-6em);
+    }
+    100%{
+        transform:translateX(0em)
+    }
+}
+/* .nav-buttonclose2{
+    animation: DrawerClose;
+}
+@keyframes DrawerClose{
+    0%{
+        transform: translateX(0em); 
+    }
+    100%{
+        transform:translateX(-5em)
+    }
+} */
+.closenavdrawer{
+    opacity: 0;
+    width: 0%;
+    animation: bounceOutLeft;
+    animation-duration: 2s;
+}
+.activo{
+    opacity: 1;
+    visibility: visible;
+}
+.inactivo{
+    opacity: 0;
+    visibility: hidden;
+}

@@ -1,0 +1,51 @@
+.preload{
+    opacity:1;
+    visibility: visible;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100vw;
+    height: 100vh;
+    background: #131C21;
+}
+.barra{
+    width: 100%;
+    padding: 2px 50px 2px 50px;
+    border-radius: 20px;
+    position: relative;
+    background: rgba(255, 255, 255, 0.2);
+    margin-top: 30px;
+    margin-bottom: 30px;
+}
+.barra::before{
+    content:'';
+    width:0;
+    top: 0;
+    position: absolute;
+    background: rgb(0, 183, 255);
+    animation: barra 4s infinite;
+    z-index: 999999;
+}
+.home{
+    opacity: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100vw;
+    height: 100vh;
+}
+.activo {
+    opacity:1;
+}
+.inactivo{
+   opacity: 0;
+   visibility: hidden;
+   width: 0;
+   height: 0;
+} 
+
+@keyframes barra {
+    100%{
+        width: 100%;
+    }
+}
