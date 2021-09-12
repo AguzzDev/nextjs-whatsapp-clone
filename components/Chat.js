@@ -1,6 +1,13 @@
 import { DesktopComputerIcon } from "@heroicons/react/solid"
 import Image from "next/image"
+import { Avatar } from "./Avatar"
 import { IconSm } from "./Icons"
+
+import ClipIcon from "../public/ClipIcon"
+import MicIcon from "../public/MicIcon"
+import SmileIcon from "../public/SmileIcon"
+import SearchIcon from "../public/SearchIcon"
+import MenuIcon from "../public/MenuIcon"
 
 export function ChatInactivo() {
     return (
@@ -21,6 +28,53 @@ export function ChatInactivo() {
                     </div>
                 </div>
                 <div className="flex items-end border-green1 w-full" style={{ height: "10%", borderBottomWidth: "8px" }}></div>
+            </div>
+        </>
+    )
+}
+export function ChatActivo() {
+    return (
+        <>
+            <div className="flex flex-col  select-none h-full w-full" >
+
+                <div className="flex justify-between items-center my-auto bg-gray3 py-4 px-5 select-none">
+                    {/* Left */}
+                    <div className="flex cursor-pointer">
+                        <Avatar />
+
+                        <div className="text-white font-medium flex items-center ml-3">
+                            <h1>Name</h1>
+                        </div>
+                    </div>
+                    {/* Right */}
+                    <div className="flex space-x-5">
+                        <SearchIcon />
+                        <MenuIcon />
+                    </div>
+
+                </div>
+
+                <div className="relative bg-backgroundChat opacity-10 w-full h-full"></div>
+
+                <div className="flex justify-between items-center  bg-gray3 py-4 px-5">
+                    {/* Left */}
+                    <div className="flex space-x-4">
+                        <SmileIcon />
+                        <ClipIcon />
+                    </div>
+                    {/* Center */}
+                    <div className="bg-gray6 rounded-full w-full py-2 mx-3">
+                        <input
+                            className="outline-none bg-transparent pl-4 text-white"
+                            placeholder="Escribe tu mensaje aqui"
+                        >
+                        </input>
+                    </div>
+                    {/* Right */}
+                    <div>
+                        <MicIcon />
+                    </div>
+                </div>
             </div>
         </>
     )

@@ -14,7 +14,7 @@ export function ListaChat() {
                 <div>
                     <h1 className="text-gray5">Recibe notificaciones de mensajes nuevos</h1>
                     <div className="flex flex-row">
-                        <p className="text-gray4 text-sm">Activar notificaciones de escritorio</p>
+                        <p className="text-gray4 text-sm hover:underline">Activar notificaciones de escritorio</p>
                         <div className="my-auto text-gray4">
                             <IconSm Icon={ChevronRightIcon} />
                         </div>

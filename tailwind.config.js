@@ -7,6 +7,9 @@ module.exports = {
     fontFamily: {
 
     },
+    backgroundImage: {
+      "backgroundChat": "url('/backgroundChat.png')"
+    },
     colors: {
       transparent: 'transparent',
       current: 'currentColor',

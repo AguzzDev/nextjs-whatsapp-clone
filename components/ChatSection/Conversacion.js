@@ -1,6 +1,6 @@
 export const Conversacion = () => {
   return (
-    <div className="flex  items-center">
+    <div className="flex  items-center hover:bg-gray1 cursor-pointer">
       <div className="w-14 h-12 rounded-full bg-white m-2"></div>
 
       <div className="flex justify-between w-full border-b border-gray-600">
