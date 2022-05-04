@@ -1,11 +1,19 @@
-import '../styles/globals.css'
-import '../styles/preload.css'
-import '../styles/dropdown.css'
-import '../styles/drawer.css'
-import '../styles/scrollbar.css'
+import "styles/globals.css"
+import "styles/scrollbar.css"
+import SocketProvider from "context/SocketContext"
+import SidebarProvider from "context/SidebarContext"
+import { AnimatePresence } from "framer-motion"
 
 function MyApp({ Component, pageProps }) {
-  return <Component {...pageProps} />
+  return (
+    <SocketProvider>
+      <SidebarProvider>
+        <AnimatePresence>
+          <Component {...pageProps} />
+        </AnimatePresence>
+      </SidebarProvider>
+    </SocketProvider>
+  )
 }
 
 export default MyApp

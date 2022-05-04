@@ -8,13 +8,22 @@
     "start": "next start"
   },
   "dependencies": {
+    "@headlessui/react": "^1.4.1",
     "@heroicons/react": "^1.0.3",
+    "@radix-ui/react-dialog": "^0.1.7",
     "@radix-ui/react-dropdown-menu": "^0.1.0",
     "animate.css": "^4.1.1",
     "antd": "^4.16.9",
+    "axios": "^0.27.2",
+    "firebase": "^8.10.0",
+    "framer-motion": "^6.3.3",
     "next": "11.0.1",
     "react": "17.0.2",
-    "react-dom": "17.0.2"
+    "react-avatar-editor": "^12.0.0",
+    "react-dom": "17.0.2",
+    "react-dropzone": "^12.1.0",
+    "react-firebase-hooks": "^3.0.4",
+    "socket.io-client": "^4.4.1"
   },
   "devDependencies": {
     "autoprefixer": "^10.3.1",

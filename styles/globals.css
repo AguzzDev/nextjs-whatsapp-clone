@@ -2,11 +2,30 @@
 @tailwind components;
 @tailwind utilities;
 
-@layer components{
-  *{
-    @apply p-0 m-0 box-border overflow-hidden ;
-  },
-  body{
-    @apply w-screen h-screen bg-body;
+@layer components {
+  * {
+    @apply p-0 m-0 box-border overflow-hidden;
+  }
+  body {
+    @apply text-white w-screen h-screen bg-bodylight dark:bg-body;
+  }
+  input {
+    @apply pl-3 border-0 outline-none bg-transparent;
+  }
+  h1,
+  h2,
+  h3,
+  h4,
+  p,
+  em,
+  li,
+  ul,
+  ol,
+  button
+  span {
+    @apply text-white;
+  }
+  h1{
+    @apply text-xl font-bold;
   }
 }

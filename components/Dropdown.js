@@ -1,35 +1,80 @@
-import Image from 'next/image';
-import { useEffect } from 'react';
+import Image from "next/image"
+import { Menu } from "@headlessui/react"
+import MenuIcon from "public/MenuIcon"
+import { useRouter } from "next/router"
+import { destroyCookie } from "nookies"
+import { useSidebar } from "../context/SidebarContext"
+import { useSockets } from "context/SocketContext"
 
 export function DropdownMenuNavUser() {
-    useEffect(() => {
-        const dropdown = document.getElementById("nav-dropdown")
-        const button = document.getElementById("nav-button-dropdown")
+  const { setSidebar, setWindowRight } = useSidebar()
+  const router = useRouter()
 
-        button.addEventListener("click", () => {
-            dropdown.classList.add("activonavdropdown")
-        })
-        dropdown.addEventListener("mouseleave", () => {
-            dropdown.classList.remove("activonavdropdown")
-        })
-    }, [])
+  const Logout = () => {
+    window.localStorage.removeItem("profile")
+    router.push("/")
+  }
+
+  const NavItems = ({ handler, title }) => {
     return (
-        <div>
-            <button id="nav-button-dropdown" className="hover:bg-gray-700 rounded-full p-1 items-center flex">
-                <Image src="/navuser3.svg" height={25} width={25} className="cursor-pointer" />
-            </button>
-
-            <div id="nav-dropdown" className="nav-dropdown">
-                <div className="flex flex-col py-2 list-none text-gray4 cursor-pointer">
-                    <li className="hover:bg-black1 pl-5 py-3">Nuevo grupo</li>
-                    <li className="hover:bg-black1 pl-5 py-3">Crear una sala</li>
-                    <li className="hover:bg-black1 pl-5 py-3">Perfil</li>
-                    <li className="hover:bg-black1 pl-5 py-3">Archivados</li>
-                    <li className="hover:bg-black1 pl-5 py-3">Destacados</li>
-                    <li className="hover:bg-black1 pl-5 py-3">Configuración</li>
-                    <li className="hover:bg-black1 pl-5 py-3">Cerrar sesión</li>
-                </div>
-            </div>
-        </div>
+      <Menu.Item>
+        {({ active }) => (
+          <button
+            onClick={handler}
+            className={`py-3 px-5 ${active && "bg-black1 cursor-pointer"}`}
+          >
+            {title}
+          </button>
+        )}
+      </Menu.Item>
     )
+  }
+
+  return (
+    <Menu as="div">
+      <Menu.Button className="flex items-center">
+        <Image
+          src="/navuser3.svg"
+          height={25}
+          width={25}
+          className="cursor-pointer"
+        />
+      </Menu.Button>
+      <Menu.Items className="flex flex-col list-none text-gray4 cursor-pointer absolute top-14 right-0 z-50 bg-gray1">
+        <NavItems title="Crear sala" handler={() => setSidebar(1)} />
+        <NavItems title="Perfil" handler={() => setSidebar(2)} />
+        <NavItems
+          title="Fondo de pantalla"
+          handler={() => {
+            setSidebar(3)
+            setWindowRight(2)
+          }}
+        />
+        <NavItems title="Cerrar sesión" handler={() => Logout()} />
+      </Menu.Items>
+    </Menu>
+  )
+}
+export function DropdownMenuMenu({ roomActive }) {
+  const { removeRoom } = useSockets()
+
+  return (
+    <Menu>
+      <Menu.Button>
+        <MenuIcon />
+      </Menu.Button>
+      <Menu.Items className="absolute transform -translate-x-5 xl:-translate-x-16 translate-y-11 z-50 flex flex-col text-gray4 bg-gray1">
+        <Menu.Item>
+          {({ active }) => (
+            <a
+              onClick={() => removeRoom(roomActive)}
+              className={`p-3 ${active && "bg-black1 cursor-pointer"}`}
+            >
+              Eliminar Chat
+            </a>
+          )}
+        </Menu.Item>
+      </Menu.Items>
+    </Menu>
+  )
 }

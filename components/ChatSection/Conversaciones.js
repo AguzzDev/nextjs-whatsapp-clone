@@ -1,16 +1,25 @@
 import { Conversacion } from "./Conversacion"
+import { useSockets } from "context/SocketContext"
 
-export const Conversaciones = () => {
-  const convers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
+export const Conversaciones = ({ search }) => {
+  const { rooms } = useSockets()
+  const searchLower = search.toLowerCase()
+
+  const orderByTime = rooms.sort((a, b) => {
+    const aTime = a.messages[a.messages.length - 1]?.timestamp
+    const bTime = b.messages[b.messages.length - 1]?.timestamp
+
+    return aTime < bTime ? 1 : -1
+  })
+  console.log(rooms);
+
   return (
     <>
-      {convers.map(conv => (
-        <div key={conv.id}>
-          <Conversacion />
-        </div>
-      )
-
-      )}
+      {!search
+        ? orderByTime.map((room, i) => <Conversacion key={i} room={room} />)
+        : orderByTime
+            ?.filter(({ name }) => name.toLowerCase().includes(searchLower))
+            .map((room, i) => <Conversacion key={i} room={room} />)}
     </>
   )
 }
