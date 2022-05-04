@@ -1,7 +1,6 @@
 import Image from "next/image"
 import { useRouter } from "next/router"
 import { useState, useEffect } from "react"
-import { setCookie } from "nookies"
 
 import API from "lib/api"
 

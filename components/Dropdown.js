@@ -2,7 +2,6 @@ import Image from "next/image"
 import { Menu } from "@headlessui/react"
 import MenuIcon from "public/MenuIcon"
 import { useRouter } from "next/router"
-import { destroyCookie } from "nookies"
 import { useSidebar } from "../context/SidebarContext"
 import { useSockets } from "context/SocketContext"
 
