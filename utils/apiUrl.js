@@ -1,1 +1,1 @@
-export const API_URL = process.env.NODE_ENV === "production" ? "https://api.whatsapp-clone.now.sh" : "http://localhost:5000"
+export const API_URL = process.env.NODE_ENV === "production" ? "https://wsp-clone.herokuapp.com" : "http://localhost:5000"
