@@ -4,12 +4,17 @@ import { motion } from "framer-motion"
 import AvatarEditor from "react-avatar-editor"
 import { imageToBase64 } from "utils/imageToBase64"
 import { useSockets } from "context/SocketContext"
+import { useSidebar } from "context/SidebarContext"
+import { userCookie } from "utils/userCookie"
 
 export const CreateRoom = () => {
+  const user = userCookie()
   const [preview, setPreview] = useState("/groupIcon.png")
-  const [participants, setParticipants] = useState([])
+  const [participants, setParticipants] = useState([user.name])
 
   const { createRoom } = useSockets()
+  const { setSidebar } = useSidebar()
+
   const nameRef = useRef()
   const descRef = useRef()
   const imageRef = useRef()
@@ -33,6 +38,7 @@ export const CreateRoom = () => {
       image: preview,
       participants,
     })
+    setSidebar(0)
   }
 
   return (
@@ -66,12 +72,22 @@ export const CreateRoom = () => {
         />
       </div>
 
-      <input ref={nameRef} placeholder="Nombre del grupo" />
-      <input ref={descRef} placeholder="Descripción del grupo" />
+      <input
+        id="input-name-group"
+        ref={nameRef}
+        placeholder="Nombre del grupo"
+      />
+      <input
+        id="input-desc-group"
+        ref={descRef}
+        placeholder="Descripción del grupo"
+      />
 
       <form onSubmit={addParticipant}>
         <input
+          id="input-invite-group"
           ref={participantRef}
+          autoComplete="off"
           placeholder="Escribe el nombre del que quieras invitar"
         />
         <button type="submit">Invitar</button>
@@ -80,7 +96,7 @@ export const CreateRoom = () => {
       <div>
         {participants.map((participant, i) => (
           <div key={i}>
-            <h2>{participant}</h2>
+            <h2>{participant === user.name ? "Tú" : participant}</h2>
           </div>
         ))}
       </div>

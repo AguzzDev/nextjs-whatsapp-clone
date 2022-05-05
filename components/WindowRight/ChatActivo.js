@@ -43,15 +43,22 @@ export function ChatActivo() {
   const searchGif = async () => {
     if (debounceRef.current) {
       clearTimeout(debounceRef.current)
+      setListGifs([])
     }
     debounceRef.current = setTimeout(async () => {
-      const { data } = await APITENOR.get(`/search`, {
-        params: {
-          q: searchGifRef.current.value,
-          limit: 20,
-          key: "GKR149X8LSDJ",
-        },
-      })
+      const inputGif = searchGifRef.current.value
+
+      const { data } = await APITENOR.get(
+        `${inputGif === "" ? "/trending" : "/search"}`,
+        {
+          params: {
+            q: inputGif !== "" && searchGifRef.current.value,
+            limit: 20,
+            key: "GKR149X8LSDJ",
+          },
+        }
+      )
+
       const dataBody = data.results.map(({ media }) =>
         media.map(({ gif }) => gif.url)
       )
@@ -61,9 +68,9 @@ export function ChatActivo() {
 
   const submitMessage = async (e) => {
     e.preventDefault()
+    if (message === "") return
 
     await sendMessage(roomActive, message)
-
     setMessage("")
   }
 
@@ -77,6 +84,12 @@ export function ChatActivo() {
   useEffect(() => {
     scrollRef.current?.scrollIntoView({ behavior: "smooth" })
   }, [messages])
+
+  useEffect(() => {
+    if (menu) {
+      searchGifRef.current.focus()
+    }
+  }, [menu])
 
   return (
     <div className="flex flex-col select-none h-full w-screen relative">
@@ -130,22 +143,32 @@ export function ChatActivo() {
                 username == user.name && "flex-row-reverse"
               } flex flex-row`}
             >
-              <div
-                style={{ clipPath: "polygon(0 0%, 100% 100%, 100% 0)" }}
-                className={`${
-                  username === user.name
-                    ? "-translate-x-1 -rotate-90"
-                    : "translate-x-2"
-                } transform w-5 h-5 bg-green1`}
-              />
+              {i === 0 ? (
+                <div className="w-5/12 mx-auto bg-green1 text-center rounded-md">
+                  <p className="py-1">
+                    <span className="font-bold">{username}</span> {message}
+                  </p>
+                </div>
+              ) : (
+                <>
+                  <div
+                    style={{ clipPath: "polygon(0 0%, 100% 100%, 100% 0)" }}
+                    className={`${
+                      username === user.name
+                        ? "-translate-x-1 -rotate-90"
+                        : "translate-x-2"
+                    } transform w-5 h-5 bg-green1`}
+                  />
 
-              <div className="flex flex-col text-white p-2 bg-green1 rounded-md">
-                <p className="font-medium">{username}</p>
-                {typeMessage(message)}
-                <p className="flex items-end justify-end text-xs tracking-tight">
-                  {formatTime(timestamp)}
-                </p>
-              </div>
+                  <div className="flex flex-col text-white p-2 bg-green1 rounded-md">
+                    <p className="font-medium">{username}</p>
+                    {typeMessage(message)}
+                    <p className="flex items-end justify-end text-xs tracking-tight">
+                      {formatTime(timestamp)}
+                    </p>
+                  </div>
+                </>
+              )}
             </div>
           ))}
         </div>
@@ -196,7 +219,7 @@ export function ChatActivo() {
             className="bg-gray7 rounded-md w-1/4 py-1 m-3"
           />
           {listGifs.length > 0 && (
-            <div className="grid grid-cols-6 gap-5">
+            <div className="grid grid-cols-6 gap-5 mx-4">
               {listGifs.map((gif, i) => (
                 <button
                   key={i}

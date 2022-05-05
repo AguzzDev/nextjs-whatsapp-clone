@@ -5,7 +5,8 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "cypress:open" : "cypress open"
   },
   "dependencies": {
     "@headlessui/react": "^1.4.1",
@@ -27,6 +28,7 @@
   },
   "devDependencies": {
     "autoprefixer": "^10.3.1",
+    "cypress": "^9.6.0",
     "postcss": "^8.3.6",
     "tailwindcss": "^2.2.7"
   }

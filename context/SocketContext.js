@@ -68,7 +68,7 @@ const SocketProvider = ({ children }) => {
   }
 
   const removeRoom = (roomId) => {
-    socket.emit(EVENTS.CLIENT.REMOVE_ROOM, roomId)
+    socket.emit(EVENTS.CLIENT.REMOVE_ROOM, roomId, user.name)
     router.push("/")
 
     socket.on(EVENTS.SERVER.SEND_ROOMS, (data) => {

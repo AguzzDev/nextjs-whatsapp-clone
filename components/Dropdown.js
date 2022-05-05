@@ -14,11 +14,12 @@ export function DropdownMenuNavUser() {
     router.push("/")
   }
 
-  const NavItems = ({ handler, title }) => {
+  const NavItems = ({ handler, title, test }) => {
     return (
       <Menu.Item>
         {({ active }) => (
           <button
+            data-test-id={test}
             onClick={handler}
             className={`py-3 px-5 ${active && "bg-black1 cursor-pointer"}`}
           >
@@ -31,7 +32,10 @@ export function DropdownMenuNavUser() {
 
   return (
     <Menu as="div">
-      <Menu.Button className="flex items-center">
+      <Menu.Button
+        data-test-id="user-nav-options"
+        className="flex items-center"
+      >
         <Image
           src="/navuser3.svg"
           height={25}
@@ -40,7 +44,11 @@ export function DropdownMenuNavUser() {
         />
       </Menu.Button>
       <Menu.Items className="flex flex-col list-none text-gray4 cursor-pointer absolute top-14 right-0 z-50 bg-gray1">
-        <NavItems title="Crear sala" handler={() => setSidebar(1)} />
+        <NavItems
+          test="create-group"
+          title="Crear sala"
+          handler={() => setSidebar(1)}
+        />
         <NavItems title="Perfil" handler={() => setSidebar(2)} />
         <NavItems
           title="Fondo de pantalla"
