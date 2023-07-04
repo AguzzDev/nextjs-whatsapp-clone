@@ -1,0 +1,3 @@
+mutation AddParticipant($participants: [ParticipantInput!]!) {
+  addParticipant(participants: $participants)
+}

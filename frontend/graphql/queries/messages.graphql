@@ -1,0 +1,13 @@
+query messages($messagesId: String!) {
+  messages(id: $messagesId) {
+    id
+    message
+    timestamp
+    type
+    user {
+      id
+      name
+      image
+    }
+  }
+}

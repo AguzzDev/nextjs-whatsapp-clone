@@ -1,0 +1,3 @@
+mutation ChangeProfile($name: String, $image: String, $bio: String) {
+  changeProfile(name: $name, image: $image, bio: $bio)
+}

@@ -1,0 +1,17 @@
+describe("create group", () => {
+  it("should create a group", () => {
+    cy.visit("https://nextjs-whatsapp-clone-aguzzdev.vercel.app/")
+    cy.wait(4000)
+    cy.contains("Click aca").click()
+    cy.get('[placeholder="Nombre"]').type("test")
+    cy.get('[placeholder="Contraseña"]').type("test")
+    cy.contains("Entrar").click()
+    cy.get('[data-test-id="user-nav-options"]').click()
+    cy.get('[data-test-id="create-group"]').click({ force: true })
+    cy.get('#input-name-group').type("test group")
+    cy.get('#input-desc-group').type("test group desc")
+    cy.get('#input-invite-group').type("aguzz")
+    cy.contains("Invitar").click()
+    cy.contains("Guardar").click()
+  })
+})

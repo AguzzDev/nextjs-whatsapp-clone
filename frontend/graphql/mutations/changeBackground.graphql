@@ -1,0 +1,3 @@
+mutation changeBackground($image: String!) {
+  changeBackground(image: $image)
+}

@@ -1,0 +1,17 @@
+query AllChats {
+  allChats {
+    id
+    name
+    image
+    messages {
+      id
+      type
+      message
+      user {
+        id
+        name
+      }
+      timestamp
+    }
+  }
+}

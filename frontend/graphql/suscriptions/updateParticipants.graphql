@@ -1,0 +1,9 @@
+subscription UpdateParticipants {
+  updateParticipants {
+    user {
+      id
+      image
+      name
+    }
+  }
+}

@@ -1,0 +1,11 @@
+query FindParticipants($findParticipantsId: String!) {
+  findParticipants(id: $findParticipantsId) {
+    user {
+      id
+      image
+      name
+      bio
+    }
+    role
+  }
+}

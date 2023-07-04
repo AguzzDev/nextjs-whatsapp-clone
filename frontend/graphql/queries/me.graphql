@@ -1,0 +1,10 @@
+query Me {
+  me {
+    id
+    name
+    image
+    backgroundImage
+    bio
+    createdAt
+  }
+}

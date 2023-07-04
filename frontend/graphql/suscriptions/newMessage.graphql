@@ -1,0 +1,13 @@
+subscription newMessages {
+  newMessages {
+    id
+    message
+    timestamp
+    type
+    user {
+      id
+      name
+      image
+    }
+  }
+}

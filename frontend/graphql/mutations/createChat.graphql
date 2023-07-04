@@ -1,0 +1,29 @@
+mutation CreateChat($name: String!, $image: String!, $participants: [ParticipantInput!]!, $description: String) {
+  createChat(name: $name, image: $image, participants: $participants, description: $description) {
+    id
+    name
+    description
+    image
+    participants {
+      user {
+        id
+        name
+        image
+        bio
+      }
+      role
+    }
+    messages {
+      id
+      type
+      message
+      user {
+        id
+        name
+        image
+      }
+      timestamp
+    }
+    createdAt
+  }
+}
