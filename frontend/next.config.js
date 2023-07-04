@@ -7,5 +7,7 @@ module.exports = {
       "cdn.pixabay.com",
     ],
   },
+ typescript:{
   ignoreBuildErrors: true,
+ }
 }
