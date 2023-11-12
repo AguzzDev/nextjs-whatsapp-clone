@@ -1,0 +1,13 @@
+mutation AddOrRemoveParticipant(
+  $type: String!
+  $removedByAdmin: Boolean
+  $chatId: String!
+  $participants: [ParticipantInput!]!
+) {
+  addOrRemoveParticipant(
+    type: $type
+    removedByAdmin: $removedByAdmin
+    chatId: $chatId
+    participants: $participants
+  )
+}

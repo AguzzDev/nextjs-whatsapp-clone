@@ -1,44 +1,44 @@
-import { Field, ID, ObjectType } from "type-graphql"
+import { Field, ID, ObjectType } from "type-graphql";
 
-import { Chat } from "./chat"
+import { Chat } from "./chat";
 
 @ObjectType()
 export class User {
   @Field(() => ID)
-  id: string
+  id: string;
   @Field()
-  name: string
+  name: string;
   @Field()
-  email: string
+  email: string;
   @Field()
-  password: string
+  password: string;
+  @Field()
+  image: string;
   @Field(() => String, { nullable: true })
-  image?: string | null
+  backgroundImage?: string | null;
   @Field(() => String, { nullable: true })
-  backgroundImage?: string | null
-  @Field(() => String, { nullable: true })
-  bio?: string | null
+  bio?: string | null;
   @Field()
-  createdAt: Date
+  createdAt: Date;
   @Field()
-  updatedAt: Date
+  updatedAt: Date;
   @Field(() => [Chat], { nullable: true })
-  chats?: Chat[]
+  chats?: Chat[];
 }
 
 @ObjectType()
 export class UserResponse {
   @Field(() => [FieldError], { nullable: true })
-  errors?: [FieldError]
+  errors?: [FieldError];
 
   @Field(() => User, { nullable: true })
-  user?: User
+  user?: User;
 }
 
 @ObjectType()
 class FieldError {
   @Field(() => String)
-  field: string
+  field: string;
   @Field(() => String)
-  message: string
+  message: string;
 }

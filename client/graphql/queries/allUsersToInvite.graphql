@@ -1,0 +1,5 @@
+query AllUsersToInvite($chatId: String!) {
+  allUsersToInvite(chatId: $chatId) {
+    ...user
+  }
+}

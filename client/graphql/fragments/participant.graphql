@@ -1,0 +1,9 @@
+fragment participant on Participant {
+  user {
+    id
+    image
+    name
+    bio
+  }
+  role
+}

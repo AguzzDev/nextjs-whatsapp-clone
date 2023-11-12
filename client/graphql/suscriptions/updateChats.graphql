@@ -1,0 +1,14 @@
+subscription UpdateChats($userId: String!) {
+  updateChats(userId: $userId) {
+    type {
+      action
+      user {
+        id
+      }
+    }
+    by
+    chat {
+      ...chat
+    }
+  }
+}

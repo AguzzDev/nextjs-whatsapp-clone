@@ -1,16 +1,16 @@
-import { ArgsType, Field } from "type-graphql"
-import { MaxLength } from "class-validator"
+import { ArgsType, Field } from "type-graphql";
+import { MaxLength } from "class-validator";
 
 @ArgsType()
 export class modifyChatInput {
-  @Field(() => String)
+  @Field(() => String, { nullable: true })
   @MaxLength(50)
-  name: string
+  name?: string;
 
-  @Field(() => String)
+  @Field(() => String, { nullable: true })
   @MaxLength(250)
-  description: string
+  description?: string;
 
-  @Field(() => String)
-  image: string
+  @Field(() => String, { nullable: true })
+  image?: string;
 }

@@ -1,30 +1,39 @@
-import {
-  Arg,
-  Args,
-  Ctx,
-  Mutation,
-  PubSub,
-  PubSubEngine,
-  Query,
-  Resolver,
-} from "type-graphql"
-import * as bcrypt from "bcrypt"
+import { Arg, Args, Ctx, Mutation, Query, Resolver } from "type-graphql";
+import * as bcrypt from "bcrypt";
 
-import { User, UserResponse } from "../models/user"
-import { createUserInput, userLoginInput } from "./inputs"
-import { Context } from "../types"
-import { changeProfileInput } from "./inputs/changeProfileInput"
+import { User, UserResponse } from "../models/user";
+import { createUserInput, userLoginInput } from "./inputs";
+import { Context } from "../types";
+import { changeProfileInput } from "./inputs/changeProfileInput";
+import { listOfUsersToInvite } from "../helpers/listOfUsersToInvite";
+import { findChatById } from "../helpers/findChatById";
 
 @Resolver()
 export class UserResolver {
   @Query(() => User)
-  async me(@Ctx() { req, prisma }: Context): Promise<User | null> {
-    console.log(req.session.userId)
-    if (!req.session.userId) return null
+  async me(
+    @Ctx() { req, prisma }: Context,
+    @Arg("id", { nullable: true }) id: string
+  ): Promise<User | null> {
+    if (!req.session.userId) return null;
     const user = await prisma.user.findUnique({
-      where: { id: req.session.userId },
-    })
-    return user
+      where: { id: id ? id : req.session.userId },
+    });
+    return user;
+  }
+
+  @Mutation(() => Boolean)
+  logout(@Ctx() { req, res }: Context) {
+    return new Promise((resolve) =>
+      req.session.destroy((err) => {
+        res.clearCookie("userCookie");
+        if (err) {
+          resolve(false);
+          return;
+        }
+        resolve(true);
+      })
+    );
   }
 
   @Mutation(() => Boolean)
@@ -32,35 +41,41 @@ export class UserResolver {
     @Ctx() { req, prisma }: Context,
     @Arg("image") image: string
   ): Promise<Boolean> {
-    const user = await prisma.user.update({
+    await prisma.user.update({
       where: { id: req.session.userId },
       data: { backgroundImage: image },
-    })
+    });
 
-    req.session.userId = user.id
-
-    return true
+    return true;
   }
 
   @Mutation(() => Boolean)
   async changeProfile(
     @Ctx() { req, prisma }: Context,
-    @Args() args: changeProfileInput,
-    @PubSub() pubsub: PubSubEngine
+    @Args() args: changeProfileInput
   ): Promise<Boolean> {
-    const user = await prisma.user.update({
+    await prisma.user.update({
       where: { id: req.session.userId },
       data: args,
-    })
-    req.session.userId = user.id
+    });
 
-    pubsub.publish("UPDATE_DETAILS_GROUP", true)
-    return true
+    return true;
   }
 
   @Query(() => [User])
   async allUsers(@Ctx() { req, prisma }: Context) {
-    return prisma.user.findMany({ where: { id: { not: req.session.userId } } })
+    return await prisma.user.findMany({
+      where: { id: { not: req.session.userId } },
+    });
+  }
+
+  @Query(() => [User])
+  async allUsersToInvite(@Arg("chatId") chatId: string) {
+    const chat = await findChatById({ id: chatId });
+
+    return await listOfUsersToInvite({
+      participants: chat!.participants,
+    });
   }
 
   @Mutation(() => UserResponse)
@@ -71,28 +86,28 @@ export class UserResolver {
     const user = await prisma.user.findUnique({
       where: { email },
       include: { chatsAll: true },
-    })
+    });
     if (!user)
       return {
         errors: [
           {
-            field: "user",
+            field: "email",
             message: "No existe este usuario",
           },
         ],
-      }
+      };
 
-    const dehash = await bcrypt.compare(password, user.password)
+    const dehash = await bcrypt.compare(password, user.password);
     if (!dehash)
       return {
         errors: [
           { field: "password", message: "La contraseña no es correcta" },
         ],
-      }
+      };
 
-    console.log(user)
-    req.session.userId = user.id
-    return { user }
+    req.session.userId = user.id;
+
+    return { user };
   }
 
   @Mutation(() => UserResponse)
@@ -103,25 +118,25 @@ export class UserResolver {
     const findUser = await prisma.user.findUnique({
       where: { email },
       include: { chatsAll: true },
-    })
+    });
 
     if (findUser)
       return {
         errors: [
           {
-            field: "user",
+            field: "email",
             message: "El mail ya fue usado",
           },
         ],
-      }
+      };
 
-    const hash = await bcrypt.hash(password, 12)
+    const hash = await bcrypt.hash(password, 12);
 
     const user = await prisma.user.create({
       data: { name, email, password: hash },
-    })
-    req.session.userId = user.id
+    });
+    req.session.userId = user.id;
 
-    return { user }
+    return { user };
   }
 }

@@ -1,0 +1,5 @@
+query FindParticipants($findParticipantsId: String!) {
+  findParticipants(id: $findParticipantsId) {
+    ...participant
+  }
+}

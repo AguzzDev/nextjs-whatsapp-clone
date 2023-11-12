@@ -1,0 +1,10 @@
+mutation AddOrRemoveAdmin($type: String!, $userId: String!) {
+  addOrRemoveAdmin(type: $type, userId: $userId) {
+    id
+    name
+    image
+    backgroundImage
+    bio
+    createdAt
+  }
+}

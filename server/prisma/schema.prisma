@@ -7,57 +7,69 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User { 
- id String @unique @id @default(uuid())
- name String 
- email String @unique
- password String 
- image String? @default("https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460__340.png")
- backgroundImage String? @default("https://images6.alphacoders.com/115/thumb-1920-1152265.jpg") 
- bio String? @default("Hey there! I am using WhatsApp.")
- createdAt DateTime @default(now())
- updatedAt DateTime @updatedAt
+model User {
+  id              String   @id @unique @default(uuid())
+  name            String
+  email           String
+  password        String
+  image           String   @default("https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460__340.png")
+  backgroundImage String?  @default("https://images6.alphacoders.com/115/thumb-1920-1152265.jpg")
+  bio             String?  @default("Hey there! I am using WhatsApp.")
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
 
- chatsOwn Chat[] @relation("allChatsRelation")
- chatsAll Participant[] @relation("ParticipantsRelation") 
- messages Message[] @relation("MessagesRelation")
+  chatsOwn       Chat[]        @relation("allChatsRelation")
+  chatsAll       Participant[] @relation("ParticipantsRelation")
+  messages       Message[]     @relation("MessagesRelation")
+  viewedMessages Message[]
+  online         Chat?         @relation("UserOnlineInChatRelation", fields: [onlineId], references: [id])
+  onlineId       String?
+
+  @@unique([email])
 }
 
-model Chat{
-  id String @id @default(uuid())
-  name String @db.VarChar(30)
-  description String @db.VarChar(250) @default("No contiene descripcion")
-  image String
-  owner User @relation("allChatsRelation",fields:[ownerId], references: [id], onDelete:Cascade)
-  ownerId String
+model Chat {
+  id           String        @id @default(uuid())
+  name         String        @db.VarChar(30)
+  description  String        @default("No contiene descripcion") @db.VarChar(250)
+  image        String
+  owner        User?         @relation("allChatsRelation", fields: [ownerId], references: [id], onDelete: SetNull)
+  ownerId      String?
   participants Participant[] @relation("ChatParticipantsRelation")
-  messages Message[] @relation("ChatMessagesRelation")
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  messages     Message[]     @relation("ChatMessagesRelation")
+  usersOnline  User[]        @relation("UserOnlineInChatRelation")
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+
+  @@unique([id])
 }
 
-model Participant{
-  user User @relation("ParticipantsRelation",fields: [userId],references: [id], onDelete:Cascade)
-  userId String
-  chat Chat @relation("ChatParticipantsRelation",fields: [chatId],references: [id], onDelete:Cascade)
-  chatId String
-  role Role @default(USER)
+model Participant {
+  user             User     @relation("ParticipantsRelation", fields: [userId], references: [id], onDelete: Cascade)
+  userId           String
+  chat             Chat     @relation("ChatParticipantsRelation", fields: [chatId], references: [id], onDelete: Cascade)
+  chatId           String
+  role             Role     @default(USER)
+  unViewedMessages Int      @default(0)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
 
-  @@id([chatId,userId])
+  @@id([chatId, userId])
 }
 
-model Message{
-  id String @id @default(uuid())
-  type String 
-  message String @db.VarChar(250)
-  user User @relation("MessagesRelation",fields:[userId],references: [id], onDelete:Cascade)
-  userId String
-  chat Chat @relation("ChatMessagesRelation",fields: [chatId], references: [id], onDelete:Cascade)
-  chatId String
+model Message {
+  id        String   @id @default(uuid())
+  type      String
+  message   String   @db.VarChar(250)
+  viewedBy  User[]
+  user      User     @relation("MessagesRelation", fields: [userId], references: [id], onDelete: Cascade)
+  userId    String
+  chat      Chat     @relation("ChatMessagesRelation", fields: [chatId], references: [id], onDelete: Cascade)
+  chatId    String
   timestamp DateTime @default(now())
 }
 
-enum Role{
-USER
-ADMIN  
+enum Role {
+  USER
+  ADMIN
 }

@@ -1,0 +1,5 @@
+subscription NewMessages($chatId: String!) {
+  newMessages(chatId: $chatId) {
+    ...messages
+  }
+}

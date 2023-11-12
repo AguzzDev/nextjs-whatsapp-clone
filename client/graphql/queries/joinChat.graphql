@@ -1,0 +1,43 @@
+query JoinChat($joinChatId: String!) {
+  joinChat(chatId: $joinChatId) {
+    id
+    name
+    description
+    image
+    owner {
+      id
+      name
+    }
+    ownerId
+    usersOnline{
+      id
+    }
+    participants {
+      user {
+        id
+        name
+        image
+        bio
+      }
+      role
+    }
+    messages {
+      id
+      type
+      message
+      user {
+        id
+        name
+        image
+      }
+      viewedBy {
+        id
+        name
+        image
+      }
+      timestamp
+    }
+    createdAt
+    updatedAt
+  }
+}

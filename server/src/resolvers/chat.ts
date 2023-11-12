@@ -8,362 +8,184 @@ import {
   Query,
   Root,
   Subscription,
-} from "type-graphql"
-import { Resolver } from "type-graphql"
+} from "type-graphql";
+import { Resolver } from "type-graphql";
 
-import { createChatInput } from "./inputs/createChatInput"
-import { Chat, Message, Participant } from "../models/chat"
-import { Context } from "../types"
+import { createChatInput } from "./inputs/createChatInput";
+import { Chat, Participant, updateChat } from "../models/chat";
+import { Message } from "../models/messages";
+import { Context } from "../types";
+
+import { createChatModule } from "../modules/createChatModule";
 import {
   addOrRemoveAdmin,
-  modifyChatInput,
-  userLeaveChatInput,
-  sendMessageInput,
-  updateChatInput,
-  filterMessagesInput,
   addOrRemoveParticipantInput,
-} from "./inputs"
+  connectOrDisconnectChatInput,
+  filterMessagesInput,
+  modifyChatInput,
+  sendMessageInput,
+  userChatsInput,
+} from "./inputs";
+import {
+  allChatsModule,
+  joinChatModule,
+  sendMessageModule,
+  addOrRemoveParticipantModule,
+  changeOptionsChatModule,
+  removeChatModule,
+  filterMessagesModule,
+  messagesModule,
+  findParticipantsModule,
+  addOrRemoveAdminModule,
+  disconnectChatsModule,
+} from "../modules";
+import { User } from "../models/user";
+import {
+  NEW_MESSAGES,
+  UPDATE_CHAT,
+  UPDATE_PARTICIPANTS,
+  UPDATE_USERS_TO_INVITE,
+} from "../constants";
 
 @Resolver()
 export class ChatResolver {
-  @Mutation(() => Chat)
+  @Mutation(() => Chat, { nullable: true })
   async createChat(
-    @Ctx() { req, prisma }: Context,
+    @Ctx() ctx: Context,
     @Args() args: createChatInput,
     @PubSub() pubsub: PubSubEngine
-  ): Promise<Chat> {
-    const chat = await prisma.chat.create({
-      data: {
-        ...args,
-        owner: {
-          connect: {
-            id: req.session.userId,
-          },
-        },
-        participants: {
-          create: { role: "ADMIN", ...args.participants[0] },
-          createMany: { data: args.participants.slice(1) },
-        },
-        messages: {
-          create: {
-            user: { connect: { id: req.session.userId } },
-            message: `Grupo creado`,
-            type: "notification",
-          },
-        },
-      },
-      include: {
-        owner: true,
-        participants: { include: { user: true } },
-      },
-    })
-
-    await pubsub.publish("UPDATE_CHATS", { type: "created", id: chat.id })
-    return chat
-  }
-
-  @Mutation(() => Boolean)
-  async addParticipant(
-    @Ctx() { req, prisma }: Context,
-    @Args() { participants }: addOrRemoveParticipantInput // @PubSub() pubsub: PubSubEngine
   ) {
-    await prisma.participant.updateMany({
-      where: { chatId: req.session.chatId! },
-      data: participants.map(({ userId }) => {
-        return { userId, chatId: req.session.chatId! }
-      }),
-    })
-
-    return true
+    return await createChatModule({ ctx, args, pubsub });
   }
 
   @Mutation(() => Boolean)
-  async addAdmin(
-    @Ctx() { req, prisma }: Context,
-    @Args() { userId }: addOrRemoveAdmin
-  ) {
-    await prisma.chat.update({
-      where: { id: req.session.chatId! },
-      data: {
-        participants: {
-          update: {
-            where: { chatId_userId: { userId, chatId: req.session.chatId! } },
-            data: { role: "ADMIN" },
-          },
-        },
-      },
-    })
-
-    return true
-  }
-  @Mutation(() => Boolean)
-  async removeAdmin(
-    @Ctx() { req, prisma }: Context,
-    @Args() { userId }: addOrRemoveAdmin
-  ) {
-    await prisma.chat.update({
-      where: { id: req.session.chatId! },
-      data: {
-        participants: {
-          update: {
-            where: { chatId_userId: { userId, chatId: req.session.chatId! } },
-            data: { role: "USER" },
-          },
-        },
-      },
-    })
-
-    return true
-  }
-
-  @Mutation(() => Boolean)
-  async changeOptionsChat(
-    @Ctx() { req, prisma }: Context,
-    @Args() args: modifyChatInput
-  ) {
-    await prisma.chat.update({
-      where: { id: req.session.chatId! },
-      data: { ...args },
-    })
-    return true
-  }
-
-  @Mutation(() => Boolean)
-  async userLeaveChat(
-    @Ctx() { prisma, req }: Context,
-    @Args() { userId, chatId }: userLeaveChatInput,
+  async addOrRemoveParticipant(
+    @Ctx() ctx: Context,
+    @Args() args: addOrRemoveParticipantInput,
     @PubSub() pubsub: PubSubEngine
   ) {
-    const user = await prisma.user.findFirst({ where: { id: userId } })
-    const chat = await prisma.chat.update({
-      where: { id: chatId },
-      data: {
-        messages: {
-          create: {
-            user: { connect: { id: req.session.userId } },
-            message: `${user!.name} ha salido del grupo`,
-            type: "notification",
-          },
-        },
-      },
-      include: {
-        messages: {
-          select: {
-            message: true,
-            id: true,
-            chat: true,
-            chatId: true,
-            timestamp: true,
-            type: true,
-            user: true,
-            userId: true,
-          },
-        },
-      },
-    })
-    const participants = await prisma.participant.delete({
-      where: { chatId_userId: { chatId: chatId, userId } },
-      include: { user: true },
-    })
+    return await addOrRemoveParticipantModule({ ctx, args, pubsub });
+  }
 
-    await pubsub.publish("NEW_MESSAGES", chat.messages.pop())
-    await pubsub.publish("UPDATE_PARTICIPANTS", participants)
-    return true
+  @Mutation(() => User || null)
+  async addOrRemoveAdmin(
+    @Ctx() ctx: Context,
+    @Args() args: addOrRemoveAdmin,
+    @PubSub() pubsub: PubSubEngine
+  ) {
+    return await addOrRemoveAdminModule({ ctx, args, pubsub });
+  }
+
+  @Mutation(() => Boolean)
+  async changeOptionsChat(@Ctx() ctx: Context, @Args() args: modifyChatInput) {
+    return await changeOptionsChatModule({ ctx, args });
   }
 
   @Mutation(() => Boolean)
   async removeChat(
-    @Ctx() { prisma }: Context,
+    @Ctx() ctx: Context,
     @Arg("id") id: string,
     @PubSub() pubsub: PubSubEngine
   ) {
-    const chatDeleted = await prisma.chat.delete({
-      where: { id },
-      include: {
-        owner: true,
-        participants: { include: { user: true, chat: true } },
-      },
-    })
-
-    await pubsub.publish("UPDATE_CHATS", {
-      type: "delete",
-      id: chatDeleted.id,
-    })
-    return true
+    return await removeChatModule({ ctx, id, pubsub });
   }
 
   @Mutation(() => Boolean)
   async sendMessage(
-    @Ctx() { req, prisma }: Context,
+    @Ctx() ctx: Context,
     @Args() args: sendMessageInput,
     @PubSub() pubsub: PubSubEngine
   ) {
-    const chat = await prisma.chat.update({
-      where: { id: args.chatId },
-      data: {
-        messages: {
-          create: {
-            user: { connect: { id: req.session.userId } },
-            message: args.message,
-            type: args.type,
-          },
-        },
-      },
-      include: {
-        messages: {
-          select: {
-            message: true,
-            id: true,
-            chat: true,
-            chatId: true,
-            timestamp: true,
-            type: true,
-            user: true,
-            userId: true,
-          },
-        },
-      },
-    })
-    await pubsub.publish("NEW_MESSAGES", chat.messages.pop())
-
-    return true
+    return await sendMessageModule({ args, pubsub, ctx });
   }
 
   @Query(() => [Message])
-  async filterMessages(
-    @Ctx() { prisma }: Context,
-    @Args() { id, message }: filterMessagesInput
-  ): Promise<Message[] | []> {
-    const messages = await prisma.chat.findFirst({
-      where: { id },
-      include: {
-        messages: {
-          where: { message: { contains: message } },
-          select: {
-            message: true,
-            id: true,
-            chat: true,
-            chatId: true,
-            timestamp: true,
-            type: true,
-            user: true,
-            userId: true,
-          },
-        },
-      },
-    })
-
-    return messages!.messages
+  async filterMessages(@Ctx() ctx: Context, @Args() args: filterMessagesInput) {
+    return await filterMessagesModule({ ctx, args });
   }
 
   @Query(() => [Message])
-  async messages(
-    @Ctx() { prisma }: Context,
-    @Arg("id") id: string
-  ): Promise<Message[]> {
-    const chat = await prisma.chat.findUnique({
-      where: { id },
-      include: {
-        messages: {
-          orderBy: {
-            timestamp: "asc",
-          },
-          select: {
-            message: true,
-            id: true,
-            chat: true,
-            chatId: true,
-            timestamp: true,
-            type: true,
-            user: true,
-            userId: true,
-          },
-        },
-      },
-    })
-
-    return chat!.messages
+  async messages(@Ctx() ctx: Context, @Arg("chatId") chatId: string) {
+    return await messagesModule({ ctx, chatId });
   }
 
   @Query(() => Chat)
   async joinChat(
-    @Ctx() { prisma }: Context,
-    @Arg("id") id: string
-  ): Promise<Chat | null> {
-    const chat = await prisma.chat.findUnique({
-      where: { id },
-      include: {
-        participants: { include: { user: true } },
-        owner: true,
-      },
-    })
+    @Ctx() ctx: Context,
+    @Args() args: connectOrDisconnectChatInput,
+    @PubSub() pubsub: PubSubEngine
+  ) {
+    return await joinChatModule({ args, ctx, pubsub });
+  }
 
-    return chat
+  @Mutation(() => Boolean)
+  async disconnectChats(@Ctx() ctx: Context, @PubSub() pubsub: PubSubEngine) {
+    return await disconnectChatsModule({ ctx, pubsub });
   }
 
   @Query(() => [Chat], { nullable: true })
-  async allChats(@Ctx() { req, prisma }: Context): Promise<Chat[] | null> {
-    const chat = await prisma.chat.findMany({
-      where: {
-        participants: {
-          some: { userId: { equals: req.session.userId } },
-        },
-      },
-      orderBy: {
-        updatedAt: "desc",
-      },
-      include: {
-        owner: true,
-        messages: {
-          select: {
-            message: true,
-            id: true,
-            chat: true,
-            chatId: true,
-            timestamp: true,
-            type: true,
-            user: true,
-            userId: true,
-          },
-        },
-        participants: { include: { user: true, chat: true } },
-      },
-    })
-
-    return chat
+  async allChats(@Ctx() ctx: Context) {
+    return await allChatsModule({ ctx });
   }
 
   @Query(() => [Participant])
   async findParticipants(
-    @Ctx() { prisma }: Context,
+    @Ctx() ctx: Context,
     @Arg("id") id: string
   ): Promise<Participant[]> {
-    const chat = await prisma.chat.findFirst({
-      where: { id },
-      include: {
-        owner: true,
-        participants: { include: { user: true, chat: true } },
-      },
-    })
-    return chat!.participants
+    return await findParticipantsModule({ ctx, id });
   }
 
-  @Subscription({
-    topics: "NEW_MESSAGES",
+  @Subscription(() => [User], {
+    topics: UPDATE_USERS_TO_INVITE,
   })
-  newMessages(@Root() payload: Message): Message {
-    return payload
+  updateUsersToInvite(
+    @Root() payload: any,
+    @Args() args: connectOrDisconnectChatInput
+  ): User[] {
+    return payload;
   }
-  @Subscription({
-    topics: "UPDATE_PARTICIPANTS",
+
+  @Subscription(() => Message, {
+    topics: NEW_MESSAGES,
+    filter: ({ payload, args }) => {
+      return payload.chatId === args.chatId;
+    },
   })
-  updateParticipants(@Root() payload: Participant): Participant {
-    return payload
+  newMessages(
+    @Root() payload: any,
+    @Args() args: connectOrDisconnectChatInput
+  ): Message {
+    return payload;
   }
-  @Subscription({
-    topics: "UPDATE_CHATS",
+
+  @Subscription(() => [Participant], {
+    topics: UPDATE_PARTICIPANTS,
+    filter: ({ payload, args }) => {
+      return payload.every(
+        ({ chatId }: { chatId: string }) => chatId === args.chatId
+      );
+    },
   })
-  updateChats(@Root() payload: updateChatInput): updateChatInput {
-    return payload
+  updateParticipants(
+    @Root() payload: [Participant],
+    @Args() args: connectOrDisconnectChatInput
+  ): Participant[] {
+    return payload;
+  }
+
+  @Subscription(() => updateChat, {
+    topics: UPDATE_CHAT,
+    filter: ({ payload, args }) => {
+      return payload.chat.participants.some(
+        ({ userId }: { userId: string }) => userId === args.userId
+      );
+    },
+  })
+  updateChats(
+    @Root() payload: updateChat,
+    @Args() args: userChatsInput
+  ): updateChat {
+    return payload;
   }
 }

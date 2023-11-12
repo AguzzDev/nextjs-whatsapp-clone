@@ -1,6 +1,0 @@
-subscription UpdateChats {
-  updateChats {
-    type
-    id 
-  }
-}

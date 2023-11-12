@@ -1,0 +1,9 @@
+subscription UpdateParticipants($chatId: String!) {
+  updateParticipants(chatId: $chatId) {
+    user {
+      id
+      image
+      name
+    }
+  }
+}

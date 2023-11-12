@@ -1,0 +1,19 @@
+fragment chat on Chat {
+ id
+    name
+    image
+    messages {
+      ...messages
+    }
+    participants {
+      user {
+        id
+        name
+        image
+        bio
+      }
+      role
+      unViewedMessages
+    }
+    updatedAt
+}

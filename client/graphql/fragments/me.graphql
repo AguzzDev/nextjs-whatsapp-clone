@@ -1,0 +1,8 @@
+fragment me on User {
+  id
+  name
+  image
+  backgroundImage
+  bio
+  createdAt
+}

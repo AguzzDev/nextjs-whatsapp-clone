@@ -1,0 +1,7 @@
+subscription UpdateUsersToInvite($chatId: String!) {
+  updateUsersToInvite(chatId: $chatId) {
+    id
+    name
+    image
+  }
+}
