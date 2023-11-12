@@ -15,7 +15,7 @@ const wsLink =
         createClient({
           url:
             process.env.NODE_ENV === "development"
-              ? "ws://wsp-elb-782460765.us-east-1.elb.amazonaws.com"
+              ? "ws://api.whatsapp-app.agustin-ribotta.xyz"
               : "ws://localhost:4000/graphql",
         })
       )
@@ -24,7 +24,7 @@ const wsLink =
 const httplink = new HttpLink({
   uri:
     process.env.NODE_ENV === "development"
-      ? "http://wsp-elb-782460765.us-east-1.elb.amazonaws.com/graphql"
+      ? "https://api.whatsapp-app.agustin-ribotta.xyz/graphql"
       : "http://localhost:4000/graphql",
   credentials: "include",
 });
