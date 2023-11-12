@@ -14,7 +14,7 @@ const wsLink =
     ? new GraphQLWsLink(
         createClient({
           url:
-            process.env.NODE_ENV === "development"
+            process.env.NODE_ENV === "production"
               ? "ws://api.whatsapp-app.agustin-ribotta.xyz"
               : "ws://localhost:4000/graphql",
         })
@@ -23,7 +23,7 @@ const wsLink =
 
 const httplink = new HttpLink({
   uri:
-    process.env.NODE_ENV === "development"
+    process.env.NODE_ENV === "production"
       ? "https://api.whatsapp-app.agustin-ribotta.xyz/graphql"
       : "http://localhost:4000/graphql",
   credentials: "include",
