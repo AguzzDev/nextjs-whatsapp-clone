@@ -17,6 +17,7 @@ const wsLink =
             process.env.NODE_ENV === "production"
               ? "ws://api.whatsapp-app.agustin-ribotta.xyz"
               : "ws://localhost:4000/graphql",
+          connectionParams: { credentials: "include" },
         })
       )
     : null;

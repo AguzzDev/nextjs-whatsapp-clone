@@ -15,5 +15,5 @@ RUN npm run build
 ENV NODE_ENV production 
 
 EXPOSE 8080
-CMD [  "npm", "run", "prisma generate && prisma migrate dev && node dist/index.js" ]
-USER node
+CMD [ "npm", "start" ]
+

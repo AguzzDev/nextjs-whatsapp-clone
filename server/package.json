@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon --exec ts-node src/index.ts",
+    "start": "npx prisma generate && npx prisma migrate deploy && node dist/index.js",
     "prisma": "npx prisma generate",
     "build": "tsc",
     "test": "set NODE_ENV=test && nodemon --exec ts-node src/index.ts",
