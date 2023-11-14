@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { NextPage } from "next/types";
-import Head from "next/head";
 
 import { Login } from "components/Login";
 import { Layout } from "components/Layout";
@@ -21,30 +20,23 @@ const Inicio: NextPage = () => {
 
   return (
     <>
-      <Head>
-        <title>Whatsapp Clone</title>
-        <meta name="description" content="Made for AguzzDev" />
-      </Head>
-
-      <>
-        {loading ? (
-          <Preload />
-        ) : !user ? (
-          <Login />
-        ) : (
-          <Layout>
-            {windowRight === "ChatInactivo" ? (
-              <ChatInactive />
-            ) : windowRight === "ChatActivo" ? (
-              <ChatActive />
-            ) : windowRight === "PreviewBackground" ? (
-              <PreviewBackground />
-            ) : windowRight === "chatDetails" ? (
-              <ChatActive />
-            ) : null}
-          </Layout>
-        )}
-      </>
+      {loading ? (
+        <Preload />
+      ) : !user ? (
+        <Login />
+      ) : (
+        <Layout>
+          {windowRight === "ChatInactivo" ? (
+            <ChatInactive />
+          ) : windowRight === "ChatActivo" ? (
+            <ChatActive />
+          ) : windowRight === "PreviewBackground" ? (
+            <PreviewBackground />
+          ) : windowRight === "chatDetails" ? (
+            <ChatActive />
+          ) : null}
+        </Layout>
+      )}
     </>
   );
 };
