@@ -33,7 +33,7 @@ import { __prod__ } from "./constants";
     res.send("status: ok");
   });
 
-  app.set("proxy", 1);
+  app.set("trust proxy", 1);
   app.use(bodyParser.text({ type: "application/graphql" }));
 
   app.use(bodyParser.json({ limit: "50mb" }));
@@ -53,6 +53,7 @@ import { __prod__ } from "./constants";
         sameSite: "lax",
         secure: true,
         maxAge: 1000 * 60 * 60 * 24 * 7 * 365,
+        domain:".agustin-ribotta.xyz"
       },
     })
   );
