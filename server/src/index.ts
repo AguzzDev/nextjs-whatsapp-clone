@@ -51,9 +51,9 @@ import { __prod__ } from "./constants";
       cookie: {
         httpOnly: true,
         sameSite: "lax",
-        secure: true,
+        secure: __prod__,
         maxAge: 1000 * 60 * 60 * 24 * 7 * 365,
-        domain:".agustin-ribotta.xyz"
+        domain: __prod__ ? ".agustin-ribotta.xyz" : undefined,
       },
     })
   );

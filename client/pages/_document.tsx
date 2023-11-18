@@ -4,6 +4,19 @@ export default function Document() {
   return (
     <Html>
       <Head>
+        <script
+          async
+          src={`https://www.googletagmanager.com/gtag/js?id='${process.env.NEXT_PUBLIC_REACTGA_ID}`}
+        />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', '${process.env.NEXT_PUBLIC_REACTGA_ID}')`,
+          }}
+        />
         <title>Whatsapp Clone</title>
         <meta name="description" content="Realtime Messaging App" />
         <link rel="icon" href="/whatsappLogo.svg" />
